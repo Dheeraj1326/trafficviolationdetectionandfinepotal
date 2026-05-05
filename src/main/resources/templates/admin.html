@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-page">
+
+<header>
+    <h2>Admin Dashboard</h2>
+    <p>Welcome, Admin!</p>
+    <button onclick="logout()">Logout</button>
+</header>
+
+<nav>
+    <a href="/index">Home</a>
+    <a href="/login">Login</a>
+    <a href="/dashboard">User Panel</a>
+    <a href="/receipt">Receipt</a>
+</nav>
+
+<section>
+    <h3>Dashboard Overview</h3>
+
+    <div class="cards">
+        <div class="card">
+            <h4>Total Users</h4>
+            <p>1,234</p>
+        </div>
+
+        <div class="card">
+            <h4>Total Payments</h4>
+            <p>1000</p>
+        </div>
+
+        <div class="card">
+            <h4>Total Revenue</h4>
+            <p>₹5,000</p>
+        </div>
+
+        <div class="card">
+            <h4>Pending</h4>
+            <p>50</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 Traffic System</p>
+</footer>
+
+<script>
+function logout(){
+    //alert("Logged out successfully");
+    location.href = "/login";
+}
+</script>
+
+</body>

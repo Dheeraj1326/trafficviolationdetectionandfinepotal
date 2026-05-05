@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+</head>
+<body class="login-page">
+<header>
+    <h2>Login</h2>
+    <p>Enter your details to continue</p>
+</header>
+<main class="form-container">
+<form onsubmit="loginUser(event)">
+<p id="error"></p>
+<label>Login as</label>
+<select id="role">
+    <option value="admin">Admin</option>
+    <option value="user">User</option>
+</select>
+<label>Email</label>
+<input type="email" id="email" required>
+<label>Password</label>
+<input type="password" id="password" required>
+<button type="submit" id="loginBtn">Login</button>
+<p>New user? <a href="/register">Register</a></p>
+</form>
+</main>
+<footer>
+    <p>© 2026 Smart Traffic System</p>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+function loginUser(event) {
+    event.preventDefault();
+
+    let role     = $("#role").val();
+    let email    = $("#email").val().trim();
+    let password = $("#password").val().trim();
+    let error    = $("#error");
+
+    // ─── Admin Login (hardcoded — API call nahi) ───────────────
+    if (role === "admin") {
+        if (email === "admin123@gmail.com" && password === "12345") {
+            showMsg("green", "Admin Login Successful ✅");
+            setTimeout(() => location.href = "/admin", 1000);
+        } else {
+            showMsg("red", "Invalid Admin Credentials ❌");
+        }
+        return;
+    }
+
+    // ─── User Login — Spring Boot API Call ────────────────────
+    $("#loginBtn").text("Loading...").prop("disabled", true);
+
+    $.ajax({
+        url: "http://localhost:8080/api/auth/login",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+            username: email,   // tera API username field use karta hai
+            password: password
+        }),
+        success: function (res) {
+            showMsg("green", "Login Successful ✅");
+            // User info save karo session ke liye
+            sessionStorage.setItem("loggedUser", res.name);
+            sessionStorage.setItem("userEmail", email);
+            setTimeout(() => location.href = "/index", 1000);
+        },
+        error: function (xhr) {
+            let msg = xhr.responseJSON?.message || "Invalid User ❌";
+            showMsg("red", msg);
+            $("#loginBtn").text("Login").prop("disabled", false);
+        }
+    });
+}
+
+function showMsg(color, msg) {
+    $("#error").css("color", color).text(msg);
+}
+</script>
+</body>
+</html>

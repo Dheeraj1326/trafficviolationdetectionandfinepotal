@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Dashboard</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+</head>
+
+<body class="user-page">
+<div class="dashboard">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>🚦 Smart Traffic</h2>
+    <ul>
+        <li onclick="location.href='/index'">🏠 Dashboard</li>
+        <!-- <li onclick="location.href='/check-fine'">🚗 Check Fine</li> -->
+        <li onclick="location.href='/dashboard'">💸 Fines</li>
+        <li onclick="location.href='/receipt'">📜 History</li>
+        <li onclick="logout()">🚪 Logout</li>
+    </ul>
+</div>
+
+<!-- MAIN -->
+<div class="main-content">
+
+<h1>Welcome, User 👋</h1>
+
+<!-- SEARCH -->
+<input type="text" id="searchUser" placeholder="Enter Username or Vehicle Number">
+<button onclick="searchFine()">Search</button>
+<button onclick="clearSearch()">Clear</button>
+
+<!-- CARDS -->
+<div class="cards">
+    <div class="card">
+        <h3>Total Fines</h3>
+        <p id="totalAmt">₹0</p>
+    </div>
+    <div class="card">
+        <h3>Pending</h3>
+        <p id="pendingAmt">₹0</p>
+    </div>
+    <div class="card">
+        <h3>Paid</h3>
+        <p id="paidAmt">₹0</p>
+    </div>
+</div>
+
+<!-- TABLE -->
+<h2>Recent Violations</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Vehicle</th>
+            <th>Violation</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="resultTable"></tbody>
+</table>
+
+<!-- PAGINATION -->
+<div id="pagination" style="margin-top:15px; text-align:center;"></div>
+
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+
+const PAGE_SIZE = 10;
+let allData    = [];   // full array from backend
+let filtered   = [];   // after search filter
+let currentPage = 0;
+
+// ─── LOAD ALL FROM BACKEND ──────────────────────────────
+function loadFines() {
+    $.ajax({
+        url: "http://localhost:8080/api/challan/all",
+        type: "GET",
+        success: function(data) {
+            allData  = data;
+            filtered = data;
+            currentPage = 0;
+            updateCards(allData);
+            renderPage();
+        },
+        error: function(err) {
+            console.log("Error:", err);
+        }
+    });
+}
+
+// ─── SEARCH (frontend filter) ───────────────────────────
+function searchFine() {
+    let keyword = $("#searchUser").val().trim().toLowerCase();
+
+    if (keyword === "") {
+        filtered = allData;
+    } else {
+        filtered = allData.filter(f =>
+            (f.vehicleNo    && f.vehicleNo.toLowerCase().includes(keyword)) ||
+            (f.violatorName && f.violatorName.toLowerCase().includes(keyword))
+        );
+    }
+
+    currentPage = 0;
+    renderPage();
+}
+
+// ─── CLEAR SEARCH ───────────────────────────────────────
+function clearSearch() {
+    $("#searchUser").val("");
+    filtered = allData;
+    currentPage = 0;
+    renderPage();
+}
+
+// ─── RENDER CURRENT PAGE ────────────────────────────────
+function renderPage() {
+    let start = currentPage * PAGE_SIZE;
+    let end   = start + PAGE_SIZE;
+    let pageData = filtered.slice(start, end);
+
+    displayTable(pageData);
+    renderPagination();
+}
+
+// ─── DISPLAY TABLE ──────────────────────────────────────
+function displayTable(data) {
+    let table = $("#resultTable");
+    table.html("");
+
+    if (!data || data.length === 0) {
+        table.html("<tr><td colspan='6'>No record found</td></tr>");
+        return;
+    }
+
+    data.forEach(fine => {
+
+        let statusBadge = fine.challanStatus === "Paid"
+            ? `<span style="color:green;">✅ Paid</span>`
+            : fine.challanStatus === "Pending"
+            ? `<span style="color:orange;">⏳ Pending</span>`
+            : `<span>${fine.challanStatus}</span>`;
+
+        let actionBtn = fine.challanStatus === "Pending"
+            ? `<button onclick="payFine('${fine.vehicleNo}','${fine.violatorName || ""}','${fine.offenceName || ""}',${fine.challanAmount})">Pay</button>`
+            : `<button onclick="payFine('${fine.vehicleNo}','${fine.violatorName || ""}','${fine.offenceName || ""}',${fine.challanAmount})">Paid</button>`;
+
+        table.append(`
+        <tr>
+            <td>${fine.violatorName  || "-"}</td>
+            <td>${fine.vehicleNo}</td>
+            <td>${fine.offenceName   || "-"}</td>
+            <td>₹${fine.challanAmount}</td>
+            <td>${statusBadge}</td>
+            <td>${actionBtn}</td>
+        </tr>`);
+    });
+}
+
+// ─── PAGINATION ─────────────────────────────────────────
+function renderPagination() {
+    let pg = $("#pagination");
+    pg.html("");
+
+    let totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+    if (totalPages <= 1) return;
+
+    // Prev
+    pg.append(`<button ${currentPage === 0 ? "disabled" : ""}
+        onclick="goPage(${currentPage - 1})">◀ Prev</button> `);
+
+    // Page numbers
+    for (let i = 0; i < totalPages; i++) {
+        pg.append(`<button
+            style="${i === currentPage ? 'font-weight:bold;text-decoration:underline;' : ''}"
+            onclick="goPage(${i})">${i + 1}</button> `);
+    }
+
+    // Next
+    pg.append(` <button ${currentPage === totalPages - 1 ? "disabled" : ""}
+        onclick="goPage(${currentPage + 1})">Next ▶</button>`);
+}
+
+function goPage(page) {
+    currentPage = page;
+    renderPage();
+}
+
+// ─── PAY ────────────────────────────────────────────────
+function payFine(vehicleNo, name, violation, amount) {
+    if (!confirm(`Pay ₹${amount} for ${vehicleNo}?`)) return;
+
+    $.ajax({
+        url: `http://localhost:8080/api/challan/pay/${vehicleNo}`,
+        type: "PUT",
+        success: function(response) {
+            // Save to localStorage for receipt page
+            localStorage.setItem("receiptData", JSON.stringify({
+                vehicle:   vehicleNo,
+                username:  name,
+                violation: violation,
+                amount:    amount,
+                date:      response.paymentDate || new Date().toISOString()
+            }));
+
+            window.location.href = '/receipt';
+        },
+        error: function() {
+            alert("Payment Failed ❌");
+        }
+    });
+}
+
+
+// ─── CARDS (based on full data) ──────────────────────────
+function updateCards(data) {
+    let total = 0, pending = 0, paid = 0;
+
+    data.forEach(f => {
+        let amount = parseFloat(f.challanAmount) || 0;
+        total += amount;
+        if (f.challanStatus === "Pending") pending += amount;
+        else if (f.challanStatus === "Paid")  paid   += amount;
+    });
+
+    $("#totalAmt").text("₹"   + total.toFixed(2));
+    $("#pendingAmt").text("₹" + pending.toFixed(2));
+    $("#paidAmt").text("₹"    + paid.toFixed(2));
+}
+
+// ─── LOGOUT ─────────────────────────────────────────────
+function logout() {
+    alert("Logged out successfully");
+    window.location.href = "/login";
+}
+
+// ─── INIT ───────────────────────────────────────────────
+window.onload = function () {
+    loadFines();
+};
+
+</script>
+</body>
+</html>

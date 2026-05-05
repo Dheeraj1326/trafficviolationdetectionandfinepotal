@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+</head>
+<body class="login-page">
+
+<header>
+    <h2>Register</h2>
+    <p>Create your account</p>
+</header>
+
+<main class="form-container">
+<form onsubmit="registerUser(event)">
+    
+    <p id="error"></p>
+
+    <label>Full Name</label>
+    <input type="text" id="name" required>
+
+    <label>Username</label>
+    <input type="text" id="username" required>
+
+    <label>Email</label>
+    <input type="email" id="email" required>
+
+    <label>Password</label>
+    <input type="password" id="password" required>
+
+    <button type="submit" id="registerBtn">Register</button>
+
+    <p>Already have an account? <a href="/login">Login</a></p>
+</form>
+</main>
+
+<footer>
+    <p>© 2026 Smart Traffic System</p>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script>
+function registerUser(event) {
+    event.preventDefault();
+
+    let name     = $("#name").val().trim();
+    let username = $("#username").val().trim();
+    let email    = $("#email").val().trim();
+    let password = $("#password").val().trim();
+
+    $("#registerBtn").text("Loading...").prop("disabled", true);
+
+    $.ajax({
+        url: "http://localhost:8080/api/auth/register",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+            name: name,
+            username: username,
+            email: email,
+            password: password
+        }),
+        success: function (res) {
+            showMsg("green", res.message || "Registration Successful ✅");
+
+            // Optional: redirect to login
+            setTimeout(() => {
+                window.location.href = "/login";
+            }, 1000);
+        },
+        error: function (xhr) {
+            let msg = xhr.responseJSON?.message || "Registration Failed ❌";
+            showMsg("red", msg);
+            $("#registerBtn").text("Register").prop("disabled", false);
+        }
+    });
+}
+
+function showMsg(color, msg) {
+    $("#error").css("color", color).text(msg);
+}
+</script>
+
+</body>
+</html>
