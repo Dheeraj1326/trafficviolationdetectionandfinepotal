@@ -21,7 +21,7 @@
     <option value="user">User</option>
 </select>
 <label>Email</label>
-<input type="email" id="email" required>
+<input type="text" id="email" required>
 <label>Password</label>
 <input type="password" id="password" required>
 <button type="submit" id="loginBtn">Login</button>
@@ -44,7 +44,7 @@ function loginUser(event) {
 
     // ─── Admin Login (hardcoded — API call nahi) ───────────────
     if (role === "admin") {
-        if (email === "admin123@gmail.com" && password === "12345") {
+        if (email === "ADMIN1111" && password === "12345") {
             showMsg("green", "Admin Login Successful ✅");
             setTimeout(() => location.href = "/admin", 1000);
         } else {
@@ -69,6 +69,7 @@ function loginUser(event) {
             // User info save karo session ke liye
             sessionStorage.setItem("loggedUser", res.name);
             sessionStorage.setItem("userEmail", email);
+            sessionStorage.setItem("userId", res.user_id);
             setTimeout(() => location.href = "/index", 1000);
         },
         error: function (xhr) {

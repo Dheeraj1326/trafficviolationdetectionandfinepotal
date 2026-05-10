@@ -26,15 +26,14 @@
 <!-- MAIN -->
 <div class="main-content">
 
-<h1>Welcome, User 👋</h1>
+<h1 id="welcomeMessage" style="
+    margin-bottom: 80px;
+">Welcome, User 👋</h1>
 
-<!-- SEARCH -->
-<input type="text" id="searchUser" placeholder="Enter Username or Vehicle Number">
-<button onclick="searchFine()">Search</button>
-<button onclick="clearSearch()">Clear</button>
+
 
 <!-- CARDS -->
-<div class="cards">
+<!-- <div class="cards">
     <div class="card">
         <h3>Total Fines</h3>
         <p id="totalAmt">₹0</p>
@@ -47,10 +46,21 @@
         <h3>Paid</h3>
         <p id="paidAmt">₹0</p>
     </div>
-</div>
+</div> -->
 
 <!-- TABLE -->
-<h2>Recent Violations</h2>
+<div style="
+			display:flex; align-items: center; justify-content:space-between; gap:10px; flex-wrap: wrap;
+			margin-bottom: 10px;
+		">
+	<h2 style="margin: 0;">Recent Violations</h2>
+	<!-- SEARCH -->
+	<div>
+	<input type="text" id="searchUser"  style="height: 28px;" placeholder="Enter Username or Vehicle Number">
+	<button onclick="searchFine()">Search</button>
+	<button onclick="clearSearch()">Clear</button>
+	</div>
+</div>
 <table>
     <thead>
         <tr>
@@ -81,8 +91,14 @@ let currentPage = 0;
 
 // ─── LOAD ALL FROM BACKEND ──────────────────────────────
 function loadFines() {
+    const userId = sessionStorage.getItem("userId");
+    if (!userId) {
+        window.location.href = "/login";
+        return;
+    }
+
     $.ajax({
-        url: "http://localhost:8080/api/challan/all",
+        url: `http://localhost:8080/api/challan/user/${userId}`,
         type: "GET",
         success: function(data) {
             allData  = data;
@@ -197,10 +213,17 @@ function goPage(page) {
 
 // ─── PAY ────────────────────────────────────────────────
 function payFine(vehicleNo, name, violation, amount) {
+    const userId = sessionStorage.getItem("userId");
+    if (!userId) {
+        alert("Please login again.");
+        window.location.href = "/login";
+        return;
+    }
+
     if (!confirm(`Pay ₹${amount} for ${vehicleNo}?`)) return;
 
     $.ajax({
-        url: `http://localhost:8080/api/challan/pay/${vehicleNo}`,
+        url: `http://localhost:8080/api/challan/pay/${userId}/${vehicleNo}`,
         type: "PUT",
         success: function(response) {
             // Save to localStorage for receipt page
@@ -239,12 +262,17 @@ function updateCards(data) {
 
 // ─── LOGOUT ─────────────────────────────────────────────
 function logout() {
+    sessionStorage.removeItem("loggedUser");
+    sessionStorage.removeItem("userEmail");
+    sessionStorage.removeItem("userId");
     alert("Logged out successfully");
     window.location.href = "/login";
 }
 
 // ─── INIT ───────────────────────────────────────────────
 window.onload = function () {
+    const name = sessionStorage.getItem("loggedUser") || "User";
+    document.getElementById("welcomeMessage").innerText = `Welcome, ${name} 👋`;
     loadFines();
 };
 

@@ -1,0 +1,337 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@500;600;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --sidebar-w: 220px;
+    --accent: #1D9E75;
+    --accent-light: #E1F5EE;
+    --accent-mid: #0F6E56;
+    --navy: #042C53;
+    --navy-mid: #185FA5;
+    --amber: #EF9F27;
+    --coral: #D85A30;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+  .shell { display: flex; min-height: 580px; font-family: var(--font-body); background: var(--color-background-tertiary); }
+  .sidebar { width: var(--sidebar-w); background: #0a1628; display: flex; flex-direction: column; padding: 0; flex-shrink: 0; border-radius: var(--border-radius-lg) 0 0 var(--border-radius-lg); overflow: hidden; }
+  .sb-brand { padding: 22px 20px 16px; border-bottom: 0.5px solid rgba(255,255,255,0.08); }
+  .sb-brand-icon { width: 36px; height: 36px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+  .sb-brand-icon i { font-size: 20px; color: #fff; }
+  .sb-brand-title { font-family: var(--font-head); font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.3px; }
+  .sb-brand-sub { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+  .sb-section { padding: 16px 12px 8px; }
+  .sb-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1.2px; padding: 0 8px; margin-bottom: 6px; }
+  .sb-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; cursor: pointer; transition: background 0.15s; color: rgba(255,255,255,0.55); font-size: 13.5px; font-weight: 400; }
+  .sb-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
+  .sb-item.active { background: var(--accent); color: #fff; font-weight: 500; }
+  .sb-item i { font-size: 17px; flex-shrink: 0; }
+  .sb-item .badge { margin-left: auto; background: rgba(255,255,255,0.15); border-radius: 20px; font-size: 10px; padding: 1px 7px; font-weight: 500; }
+  .sb-item.active .badge { background: rgba(255,255,255,0.25); }
+  .sb-divider { height: 0.5px; background: rgba(255,255,255,0.07); margin: 8px 12px; }
+  .sb-bottom { margin-top: auto; padding: 12px; border-top: 0.5px solid rgba(255,255,255,0.07); }
+  .sb-user { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 8px; cursor: pointer; }
+  .sb-user:hover { background: rgba(255,255,255,0.06); }
+  .sb-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #fff; flex-shrink: 0; }
+  .sb-uname { font-size: 12.5px; color: rgba(255,255,255,0.75); font-weight: 500; }
+  .sb-urole { font-size: 11px; color: rgba(255,255,255,0.35); }
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: var(--color-background-primary); border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .topbar-left { display: flex; flex-direction: column; }
+  .topbar-title { font-family: var(--font-head); font-size: 18px; font-weight: 600; color: var(--color-text-primary); }
+  .topbar-date { font-size: 12px; color: var(--color-text-secondary); margin-top: 1px; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .tb-btn { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; border: 0.5px solid var(--color-border-secondary); background: transparent; cursor: pointer; font-size: 12.5px; color: var(--color-text-secondary); font-family: var(--font-body); }
+  .tb-btn:hover { background: var(--color-background-secondary); }
+  .tb-btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .tb-btn-primary:hover { background: var(--accent-mid); }
+  .content { padding: 22px 24px; flex: 1; overflow-y: auto; }
+  .metrics { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin-bottom: 22px; }
+  .metric-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 16px 18px; position: relative; overflow: hidden; }
+  .mc-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+  .mc-icon i { font-size: 19px; }
+  .mc-icon.green { background: #E1F5EE; } .mc-icon.green i { color: #0F6E56; }
+  .mc-icon.blue { background: #E6F1FB; } .mc-icon.blue i { color: #185FA5; }
+  .mc-icon.amber { background: #FAEEDA; } .mc-icon.amber i { color: #854F0B; }
+  .mc-icon.coral { background: #FAECE7; } .mc-icon.coral i { color: #993C1D; }
+  .mc-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .mc-value { font-family: var(--font-head); font-size: 24px; font-weight: 600; color: var(--color-text-primary); }
+  .mc-delta { font-size: 11px; margin-top: 4px; display: flex; align-items: center; gap: 3px; }
+  .delta-up { color: #0F6E56; } .delta-dn { color: #993C1D; }
+  .mc-bar { position: absolute; bottom: 0; left: 0; height: 3px; border-radius: 0 0 0 var(--border-radius-lg); }
+  .mc-bar.green { background: #1D9E75; width: 72%; }
+  .mc-bar.blue { background: #378ADD; width: 60%; }
+  .mc-bar.amber { background: #EF9F27; width: 45%; }
+  .mc-bar.coral { background: #D85A30; width: 30%; }
+  .row2 { display: grid; grid-template-columns: 1fr 280px; gap: 14px; margin-bottom: 22px; }
+  .panel { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 18px 20px; }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .panel-title { font-family: var(--font-head); font-size: 14px; font-weight: 600; color: var(--color-text-primary); }
+  .panel-link { font-size: 12px; color: #1D9E75; cursor: pointer; display: flex; align-items: center; gap: 3px; }
+  .chart-bars { display: flex; align-items: flex-end; gap: 8px; height: 120px; }
+  .bar-col { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; }
+  .bar-wrap { flex: 1; width: 100%; display: flex; align-items: flex-end; }
+  .bar { width: 100%; border-radius: 4px 4px 0 0; transition: opacity 0.2s; }
+  .bar:hover { opacity: 0.8; cursor: pointer; }
+  .bar-label { font-size: 10px; color: var(--color-text-secondary); }
+  .bar-val { font-size: 10px; font-weight: 500; color: var(--color-text-primary); }
+  .violations-list { display: flex; flex-direction: column; gap: 10px; }
+  .vio-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--color-background-secondary); border-radius: 8px; }
+  .vio-left { display: flex; align-items: center; gap: 10px; }
+  .vio-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .vio-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .vio-count { font-size: 11px; color: var(--color-text-secondary); }
+  .vio-pct { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); }
+  .vio-prog { height: 4px; background: var(--color-border-tertiary); border-radius: 2px; margin-top: 4px; width: 80px; }
+  .vio-prog-fill { height: 100%; border-radius: 2px; }
+  .recent-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .recent-table th { text-align: left; font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.7px; padding: 0 0 10px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .recent-table td { padding: 11px 0; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); vertical-align: middle; }
+  .recent-table tr:last-child td { border-bottom: none; }
+  .pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+  .pill.paid { background: #E1F5EE; color: #085041; }
+  .pill.pending { background: #FAEEDA; color: #633806; }
+  .pill.overdue { background: #FAECE7; color: #712B13; }
+  .veh-tag { font-family: monospace; font-size: 12px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); padding: 2px 7px; border-radius: 4px; color: var(--color-text-secondary); }
+  .act-btn { padding: 4px 10px; border-radius: 6px; border: 0.5px solid var(--color-border-secondary); background: transparent; font-size: 11.5px; cursor: pointer; color: var(--color-text-secondary); font-family: var(--font-body); }
+  .act-btn:hover { background: var(--color-background-secondary); }
+</style>
+
+<h2 class="sr-only" style="position:absolute;left:-9999px">Smart Traffic Admin Dashboard</h2>
+
+<div class="shell">
+  <div class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-brand-icon"><i class="ti ti-traffic-lights" aria-hidden="true"></i></div>
+      <div class="sb-brand-title">Smart Traffic</div>
+      <div class="sb-brand-sub">Traffic Management System</div>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-label">Main</div>
+      <div class="sb-item active"><i class="ti ti-layout-dashboard" aria-hidden="true"></i> Dashboard</div>
+      <div class="sb-item"><i class="ti ti-users" aria-hidden="true"></i> User Panel <span class="badge">1,234</span></div>
+      <div class="sb-item"><i class="ti ti-file-invoice" aria-hidden="true"></i> Create Challan</div>
+      <div class="sb-item"><i class="ti ti-receipt" aria-hidden="true"></i> Receipts</div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-section">
+      <div class="sb-label">Reports</div>
+      <div class="sb-item"><i class="ti ti-chart-bar" aria-hidden="true"></i> Analytics</div>
+      <div class="sb-item"><i class="ti ti-history" aria-hidden="true"></i> History</div>
+      <div class="sb-item"><i class="ti ti-bell" aria-hidden="true"></i> Alerts <span class="badge">5</span></div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-section">
+      <div class="sb-label">System</div>
+      <div class="sb-item"><i class="ti ti-settings" aria-hidden="true"></i> Settings</div>
+      <div class="sb-item"><i class="ti ti-help" aria-hidden="true"></i> Help</div>
+    </div>
+
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="sb-avatar">AD</div>
+        <div>
+          <div class="sb-uname">Admin</div>
+          <div class="sb-urole">Super Admin</div>
+        </div>
+        <i class="ti ti-logout" style="font-size:15px; color:rgba(255,255,255,0.3); margin-left:auto;" aria-hidden="true"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title">Dashboard Overview</div>
+        <div class="topbar-date">Friday, 8 May 2026 &nbsp;·&nbsp; Nagpur, MH</div>
+      </div>
+      <div class="topbar-right">
+        <button class="tb-btn"><i class="ti ti-search" style="font-size:14px" aria-hidden="true"></i> Search</button>
+        <button class="tb-btn"><i class="ti ti-bell" style="font-size:14px" aria-hidden="true"></i> 5</button>
+        <button class="tb-btn tb-btn-primary"><i class="ti ti-plus" style="font-size:14px" aria-hidden="true"></i> New Challan</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="metrics">
+        <div class="metric-card">
+          <div class="mc-icon green"><i class="ti ti-users" aria-hidden="true"></i></div>
+          <div class="mc-label">Total Users</div>
+          <div class="mc-value">1,234</div>
+          <div class="mc-delta delta-up"><i class="ti ti-trending-up" style="font-size:12px"></i> +12% this month</div>
+          <div class="mc-bar green"></div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-icon blue"><i class="ti ti-credit-card" aria-hidden="true"></i></div>
+          <div class="mc-label">Total Payments</div>
+          <div class="mc-value">1,000</div>
+          <div class="mc-delta delta-up"><i class="ti ti-trending-up" style="font-size:12px"></i> +8% this month</div>
+          <div class="mc-bar blue"></div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-icon amber"><i class="ti ti-currency-rupee" aria-hidden="true"></i></div>
+          <div class="mc-label">Total Revenue</div>
+          <div class="mc-value">₹5,000</div>
+          <div class="mc-delta delta-up"><i class="ti ti-trending-up" style="font-size:12px"></i> +15% this month</div>
+          <div class="mc-bar amber"></div>
+        </div>
+        <div class="metric-card">
+          <div class="mc-icon coral"><i class="ti ti-clock" aria-hidden="true"></i></div>
+          <div class="mc-label">Pending Challans</div>
+          <div class="mc-value">50</div>
+          <div class="mc-delta delta-dn"><i class="ti ti-trending-down" style="font-size:12px"></i> -3 from yesterday</div>
+          <div class="mc-bar coral"></div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Monthly Collections (₹)</span>
+            <span class="panel-link">View all <i class="ti ti-arrow-right" style="font-size:12px"></i></span>
+          </div>
+          <div class="chart-bars" id="barChart"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Violation Types</span>
+          </div>
+          <div class="violations-list">
+            <div class="vio-item">
+              <div class="vio-left">
+                <div class="vio-dot" style="background:#1D9E75"></div>
+                <div>
+                  <div class="vio-name">Signal Jump</div>
+                  <div class="vio-count">420 cases</div>
+                </div>
+              </div>
+              <div style="text-align:right">
+                <div class="vio-pct">42%</div>
+                <div class="vio-prog"><div class="vio-prog-fill" style="width:42%; background:#1D9E75"></div></div>
+              </div>
+            </div>
+            <div class="vio-item">
+              <div class="vio-left">
+                <div class="vio-dot" style="background:#378ADD"></div>
+                <div>
+                  <div class="vio-name">Speeding</div>
+                  <div class="vio-count">300 cases</div>
+                </div>
+              </div>
+              <div style="text-align:right">
+                <div class="vio-pct">30%</div>
+                <div class="vio-prog"><div class="vio-prog-fill" style="width:30%; background:#378ADD"></div></div>
+              </div>
+            </div>
+            <div class="vio-item">
+              <div class="vio-left">
+                <div class="vio-dot" style="background:#EF9F27"></div>
+                <div>
+                  <div class="vio-name">No Helmet</div>
+                  <div class="vio-count">180 cases</div>
+                </div>
+              </div>
+              <div style="text-align:right">
+                <div class="vio-pct">18%</div>
+                <div class="vio-prog"><div class="vio-prog-fill" style="width:18%; background:#EF9F27"></div></div>
+              </div>
+            </div>
+            <div class="vio-item">
+              <div class="vio-left">
+                <div class="vio-dot" style="background:#D85A30"></div>
+                <div>
+                  <div class="vio-name">Wrong Parking</div>
+                  <div class="vio-count">100 cases</div>
+                </div>
+              </div>
+              <div style="text-align:right">
+                <div class="vio-pct">10%</div>
+                <div class="vio-prog"><div class="vio-prog-fill" style="width:10%; background:#D85A30"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">Recent Violations</span>
+          <span class="panel-link">See all <i class="ti ti-arrow-right" style="font-size:12px"></i></span>
+        </div>
+        <table class="recent-table">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Vehicle</th>
+              <th>Violation</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Rahul Sharma</td>
+              <td><span class="veh-tag">MH31AB1234</span></td>
+              <td>Signal Jump</td>
+              <td>₹500</td>
+              <td style="color:var(--color-text-secondary); font-size:12px">07 May 2026</td>
+              <td><span class="pill pending">Pending</span></td>
+              <td><button class="act-btn">View</button></td>
+            </tr>
+            <tr>
+              <td>Priya Desai</td>
+              <td><span class="veh-tag">MH40XY5678</span></td>
+              <td>Speeding</td>
+              <td>₹1,000</td>
+              <td style="color:var(--color-text-secondary); font-size:12px">06 May 2026</td>
+              <td><span class="pill paid">Paid</span></td>
+              <td><button class="act-btn">View</button></td>
+            </tr>
+            <tr>
+              <td>Amit Naik</td>
+              <td><span class="veh-tag">MH12GH9012</span></td>
+              <td>No Helmet</td>
+              <td>₹300</td>
+              <td style="color:var(--color-text-secondary); font-size:12px">05 May 2026</td>
+              <td><span class="pill overdue">Overdue</span></td>
+              <td><button class="act-btn">View</button></td>
+            </tr>
+            <tr>
+              <td>Sneha Kulkarni</td>
+              <td><span class="veh-tag">MH49CD3456</span></td>
+              <td>Wrong Parking</td>
+              <td>₹200</td>
+              <td style="color:var(--color-text-secondary); font-size:12px">04 May 2026</td>
+              <td><span class="pill paid">Paid</span></td>
+              <td><button class="act-btn">View</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const months = ['Nov','Dec','Jan','Feb','Mar','Apr'];
+const vals = [3200, 4100, 2800, 5500, 4700, 5000];
+const max = Math.max(...vals);
+const colors = ['#9FE1CB','#9FE1CB','#9FE1CB','#9FE1CB','#9FE1CB','#1D9E75'];
+const chart = document.getElementById('barChart');
+months.forEach((m, i) => {
+  const pct = Math.round((vals[i] / max) * 100);
+  chart.innerHTML += `<div class="bar-col">
+    <div class="bar-val">₹${(vals[i]/1000).toFixed(1)}k</div>
+    <div class="bar-wrap"><div class="bar" style="height:${pct}%; background:${colors[i]}"></div></div>
+    <div class="bar-label">${m}</div>
+  </div>`;
+});
+</script>

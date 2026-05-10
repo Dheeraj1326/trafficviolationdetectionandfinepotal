@@ -21,8 +21,8 @@
         <div class="logo">🚦 Smart Traffic</div>
         <ul>
             <li><a href="/index">Home</a></li>
-            <li><a href="/login">Login</a></li>
             <li><a href="/dashboard">Pay Fine</a></li>
+            <li><a onclick="logout()">Logout</a></li>
         </ul>
     </nav>
 </header>
@@ -143,6 +143,17 @@
 <footer>
     <p>© 2026 Smart Traffic System</p>
 </footer>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script type="text/javascript">
+function logout() {
+    sessionStorage.removeItem("loggedUser");
+    sessionStorage.removeItem("userEmail");
+    sessionStorage.removeItem("userId");
+    alert("Logged out successfully");
+    window.location.href = "/login";
+}
+</script>
 
 </body>
 </html>

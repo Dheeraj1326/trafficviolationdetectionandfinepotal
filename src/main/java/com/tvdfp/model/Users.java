@@ -22,8 +22,7 @@ public class Users {
 	private Date created;
 	@Temporal(TemporalType.DATE)
 	private Date modified;
-	private int status;
-	private int tempOtp;
+	private Integer status;
 	
 	public Long getUser_id() {
 		return user_id;
@@ -67,26 +66,21 @@ public class Users {
 	public void setModified(Date modified) {
 		this.modified = modified;
 	}
-	public int getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
-	public void setStatus(int status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 	
-	public int getTempOtp() {
-		return tempOtp;
-	}
-	public void setTempOtp(int tempOtp) {
-		this.tempOtp = tempOtp;
-	}
+	
 	
 	public Users() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	public Users(Long user_id, String name, String username, String password, String email, Date created, Date modified,
-			int status, int tempOtp) {
+			Integer status) {
 		super();
 		this.user_id = user_id;
 		this.name = name;
@@ -96,13 +90,13 @@ public class Users {
 		this.created = created;
 		this.modified = modified;
 		this.status = status;
-		this.tempOtp = tempOtp;
+		
 	}
 	@Override
 	public String toString() {
 		return "User [user_id=" + user_id + ", name=" + name + ", username=" + username + ", password=" + password
 				+ ", email=" + email + ", created=" + created + ", modified=" + modified + ", status=" + status
-				+ ", tempOtp=" + tempOtp + "]";
+				+ "]";
 	}
 }
 	

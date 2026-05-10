@@ -1,0 +1,311 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@500;600;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --sidebar-w: 220px;
+    --accent: #1D9E75;
+    --accent-light: #E1F5EE;
+    --accent-mid: #0F6E56;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+  .shell { display: flex; min-height: 700px; font-family: var(--font-body); background: var(--color-background-tertiary); }
+  .sidebar { width: var(--sidebar-w); background: #0a1628; display: flex; flex-direction: column; flex-shrink: 0; border-radius: var(--border-radius-lg) 0 0 var(--border-radius-lg); overflow: hidden; }
+  .sb-brand { padding: 22px 20px 16px; border-bottom: 0.5px solid rgba(255,255,255,0.08); }
+  .sb-brand-icon { width: 36px; height: 36px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+  .sb-brand-icon i { font-size: 20px; color: #fff; }
+  .sb-brand-title { font-family: var(--font-head); font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.3px; }
+  .sb-brand-sub { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+  .sb-section { padding: 16px 12px 8px; }
+  .sb-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1.2px; padding: 0 8px; margin-bottom: 6px; }
+  .sb-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; cursor: pointer; color: rgba(255,255,255,0.55); font-size: 13.5px; }
+  .sb-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
+  .sb-item.active { background: var(--accent); color: #fff; font-weight: 500; }
+  .sb-item i { font-size: 17px; flex-shrink: 0; }
+  .sb-item .badge { margin-left: auto; background: rgba(255,255,255,0.15); border-radius: 20px; font-size: 10px; padding: 1px 7px; }
+  .sb-divider { height: 0.5px; background: rgba(255,255,255,0.07); margin: 8px 12px; }
+  .sb-bottom { margin-top: auto; padding: 12px; border-top: 0.5px solid rgba(255,255,255,0.07); }
+  .sb-user { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 8px; cursor: pointer; }
+  .sb-user:hover { background: rgba(255,255,255,0.06); }
+  .sb-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #fff; flex-shrink: 0; }
+  .sb-uname { font-size: 12.5px; color: rgba(255,255,255,0.75); font-weight: 500; }
+  .sb-urole { font-size: 11px; color: rgba(255,255,255,0.35); }
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: var(--color-background-primary); border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .topbar-left { display: flex; flex-direction: column; }
+  .topbar-title { font-family: var(--font-head); font-size: 18px; font-weight: 600; color: var(--color-text-primary); }
+  .topbar-date { font-size: 12px; color: var(--color-text-secondary); margin-top: 1px; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .tb-btn { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; border: 0.5px solid var(--color-border-secondary); background: transparent; cursor: pointer; font-size: 12.5px; color: var(--color-text-secondary); font-family: var(--font-body); }
+  .tb-btn:hover { background: var(--color-background-secondary); }
+  .tb-btn-ghost { background: transparent; border-color: var(--color-border-secondary); }
+  .content { padding: 24px; flex: 1; overflow-y: auto; }
+  .form-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; }
+  .form-card-header { padding: 18px 24px; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; align-items: center; gap: 12px; }
+  .form-card-icon { width: 38px; height: 38px; background: #E1F5EE; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .form-card-icon i { font-size: 20px; color: #0F6E56; }
+  .form-card-title { font-family: var(--font-head); font-size: 15px; font-weight: 600; color: var(--color-text-primary); }
+  .form-card-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+  .form-body { padding: 24px; }
+  .section-label { font-size: 11px; font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .form-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; margin-bottom: 24px; }
+  .form-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; margin-bottom: 24px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group label { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); }
+  .form-group input, .form-group select {
+    padding: 8px 11px; border-radius: 7px; border: 0.5px solid var(--color-border-secondary);
+    background: var(--color-background-secondary); font-size: 13px; font-family: var(--font-body);
+    color: var(--color-text-primary); outline: none; width: 100%;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(29,158,117,0.15); }
+  .form-group input::placeholder { color: var(--color-text-secondary); opacity: 0.6; }
+  .required-star { color: #D85A30; margin-left: 2px; }
+  .form-footer { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-top: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); }
+  .btn-submit { display: flex; align-items: center; gap: 7px; padding: 9px 22px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 13.5px; font-weight: 500; font-family: var(--font-body); cursor: pointer; }
+  .btn-submit:hover { background: var(--accent-mid); }
+  .btn-reset { display: flex; align-items: center; gap: 6px; padding: 9px 18px; background: transparent; border: 0.5px solid var(--color-border-secondary); color: var(--color-text-secondary); border-radius: 8px; font-size: 13px; font-family: var(--font-body); cursor: pointer; }
+  .btn-reset:hover { background: var(--color-background-primary); }
+  .msg-success { background: #E1F5EE; color: #085041; border: 0.5px solid #5DCAA5; border-radius: 8px; padding: 10px 14px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+  .msg-error { background: #FAECE7; color: #712B13; border: 0.5px solid #F0997B; border-radius: 8px; padding: 10px 14px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+  #formMessage { margin: 0 24px 16px; }
+  .impound-row { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+</style>
+
+<h2 class="sr-only" style="position:absolute;left:-9999px">Create Traffic Challan</h2>
+
+<div class="shell">
+  <div class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-brand-icon"><i class="ti ti-traffic-lights" aria-hidden="true"></i></div>
+      <div class="sb-brand-title">Smart Traffic</div>
+      <div class="sb-brand-sub">Traffic Management System</div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">Main</div>
+      <div class="sb-item" onclick="location.href='/admin'"><i class="ti ti-layout-dashboard" aria-hidden="true"></i> Dashboard</div>
+      <div class="sb-item" onclick="location.href='/dashboard'"><i class="ti ti-users" aria-hidden="true"></i> User Panel <span class="badge">1,234</span></div>
+      <div class="sb-item active"><i class="ti ti-file-invoice" aria-hidden="true"></i> Create Challan</div>
+      <div class="sb-item" onclick="location.href='/receipt'"><i class="ti ti-receipt" aria-hidden="true"></i> Receipts</div>
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-section">
+      <div class="sb-label">Reports</div>
+      <div class="sb-item"><i class="ti ti-chart-bar" aria-hidden="true"></i> Analytics</div>
+      <div class="sb-item"><i class="ti ti-history" aria-hidden="true"></i> History</div>
+      <div class="sb-item"><i class="ti ti-bell" aria-hidden="true"></i> Alerts <span class="badge">5</span></div>
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-section">
+      <div class="sb-label">System</div>
+      <div class="sb-item"><i class="ti ti-settings" aria-hidden="true"></i> Settings</div>
+      <div class="sb-item"><i class="ti ti-help" aria-hidden="true"></i> Help</div>
+    </div>
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="sb-avatar">AD</div>
+        <div>
+          <div class="sb-uname">Admin</div>
+          <div class="sb-urole">Super Admin</div>
+        </div>
+        <i class="ti ti-logout" style="font-size:15px;color:rgba(255,255,255,0.3);margin-left:auto;" aria-hidden="true"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title">Create Traffic Challan</div>
+        <div class="topbar-date">Friday, 8 May 2026 &nbsp;·&nbsp; Nagpur, MH</div>
+      </div>
+      <div class="topbar-right">
+        <button class="tb-btn tb-ghost" onclick="location.href='/admin'"><i class="ti ti-arrow-left" style="font-size:14px" aria-hidden="true"></i> Back to Admin</button>
+        <button class="tb-btn"><i class="ti ti-bell" style="font-size:14px" aria-hidden="true"></i> 5</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="form-card">
+        <div class="form-card-header">
+          <div class="form-card-icon"><i class="ti ti-file-plus" aria-hidden="true"></i></div>
+          <div>
+            <div class="form-card-title">New Challan Record</div>
+            <div class="form-card-sub">Attach a traffic challan to a registered user</div>
+          </div>
+        </div>
+
+        <div class="form-body">
+
+          <!-- Section 1: Assignment -->
+          <div class="section-label">Assignment</div>
+          <div class="form-grid-2" style="margin-bottom:24px">
+            <div class="form-group">
+              <label for="userId">Assign to user <span class="required-star">*</span></label>
+              <select id="userId" name="userId" required>
+                <option value="">Loading users...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="challanNo">Challan number <span class="required-star">*</span></label>
+              <input type="text" id="challanNo" name="challanNo" placeholder="e.g. MH31-2026-00123" required>
+            </div>
+          </div>
+
+          <!-- Section 2: Vehicle & Violator -->
+          <div class="section-label">Vehicle &amp; Violator</div>
+          <div class="form-grid" style="margin-bottom:24px">
+            <div class="form-group">
+              <label for="vehicleNo">Vehicle number <span class="required-star">*</span></label>
+              <input type="text" id="vehicleNo" name="vehicleNo" placeholder="e.g. MH31AB1234" required>
+            </div>
+            <div class="form-group">
+              <label for="violatorName">Violator name <span class="required-star">*</span></label>
+              <input type="text" id="violatorName" name="violatorName" placeholder="Full name" required>
+            </div>
+            <div class="form-group">
+              <label for="vehicleImpound">Vehicle impound</label>
+              <select id="vehicleImpound" name="vehicleImpound">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Section 3: Offence & Fine -->
+          <div class="section-label">Offence &amp; Fine</div>
+          <div class="form-grid" style="margin-bottom:24px">
+            <div class="form-group">
+              <label for="offenceName">Offence name</label>
+              <input type="text" id="offenceName" name="offenceName" placeholder="e.g. Signal Jump">
+            </div>
+            <div class="form-group">
+              <label for="mvaSection">MVA section</label>
+              <input type="text" id="mvaSection" name="mvaSection" placeholder="e.g. 119(1)">
+            </div>
+            <div class="form-group">
+              <label for="designation">Designation</label>
+              <input type="text" id="designation" name="designation" placeholder="Issuing officer">
+            </div>
+            <div class="form-group">
+              <label for="challanAmount">Challan amount (₹) <span class="required-star">*</span></label>
+              <input type="number" id="challanAmount" name="challanAmount" step="0.01" placeholder="0.00" required>
+            </div>
+            <div class="form-group">
+              <label for="penalty">Penalty (₹)</label>
+              <input type="number" id="penalty" name="penalty" step="0.01" placeholder="0.00">
+            </div>
+            <div class="form-group">
+              <label for="courtName">Court name</label>
+              <input type="text" id="courtName" name="courtName" placeholder="e.g. Nagpur Traffic Court">
+            </div>
+          </div>
+
+          <!-- Section 4: Location -->
+          <div class="section-label">Location</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="state">State</label>
+              <input type="text" id="state" name="state" value="Maharashtra">
+            </div>
+            <div class="form-group">
+              <label for="city">City</label>
+              <input type="text" id="city" name="city" placeholder="e.g. Nagpur">
+            </div>
+            <div class="form-group">
+              <label for="areaName">Area name</label>
+              <input type="text" id="areaName" name="areaName" placeholder="e.g. Dharampeth">
+            </div>
+            <div class="form-group">
+              <label for="rtoCode">RTO code</label>
+              <input type="text" id="rtoCode" name="rtoCode" placeholder="e.g. MH31">
+            </div>
+          </div>
+
+        </div>
+
+        <div id="formMessage"></div>
+
+        <div class="form-footer">
+          <button class="btn-reset" type="button" onclick="resetForm()"><i class="ti ti-refresh" style="font-size:14px" aria-hidden="true"></i> Reset</button>
+          <button class="btn-submit" type="button" onclick="submitForm()"><i class="ti ti-device-floppy" style="font-size:15px" aria-hidden="true"></i> Save Challan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+async function loadUsers() {
+  const select = document.getElementById('userId');
+  try {
+    const res = await fetch('/api/challan/users');
+    const users = await res.json();
+    select.innerHTML = '<option value="">Select user</option>';
+    users.forEach(u => {
+      const opt = document.createElement('option');
+      opt.value = u.user_id;
+      opt.textContent = `${u.name} (${u.username || u.email})`;
+      select.appendChild(opt);
+    });
+  } catch {
+    select.innerHTML = '<option value="">Unable to load users</option>';
+  }
+}
+
+function resetForm() {
+  ['challanNo','vehicleNo','violatorName','challanAmount','offenceName','mvaSection','penalty','city','areaName','rtoCode','courtName','designation'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = id === 'state' ? 'Maharashtra' : '';
+  });
+  document.getElementById('userId').selectedIndex = 0;
+  document.getElementById('vehicleImpound').selectedIndex = 0;
+  document.getElementById('formMessage').innerHTML = '';
+}
+
+async function submitForm() {
+  const msg = document.getElementById('formMessage');
+  const payload = {
+    userId: Number(document.getElementById('userId').value),
+    challanNo: document.getElementById('challanNo').value,
+    vehicleNo: document.getElementById('vehicleNo').value,
+    violatorName: document.getElementById('violatorName').value,
+    challanAmount: Number(document.getElementById('challanAmount').value),
+    offenceName: document.getElementById('offenceName').value,
+    mvaSection: document.getElementById('mvaSection').value,
+    penalty: Number(document.getElementById('penalty').value) || 0,
+    state: document.getElementById('state').value,
+    city: document.getElementById('city').value,
+    areaName: document.getElementById('areaName').value,
+    rtoCode: document.getElementById('rtoCode').value,
+    courtName: document.getElementById('courtName').value,
+    designation: document.getElementById('designation').value,
+    vehicleImpound: document.getElementById('vehicleImpound').value
+  };
+
+  if (!payload.userId || !payload.challanNo || !payload.vehicleNo || !payload.violatorName || !payload.challanAmount) {
+    msg.innerHTML = '<div class="msg-error"><i class="ti ti-alert-circle" style="font-size:15px"></i> Please fill all required fields.</div>';
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/challan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      msg.innerHTML = `<div class="msg-error"><i class="ti ti-alert-circle" style="font-size:15px"></i> ${err.message || 'Failed to create challan.'}</div>`;
+      return;
+    }
+    const result = await res.json();
+    msg.innerHTML = `<div class="msg-success"><i class="ti ti-circle-check" style="font-size:15px"></i> Challan created successfully for user ID ${result.user.user_id}!</div>`;
+    resetForm();
+  } catch {
+    msg.innerHTML = '<div class="msg-error"><i class="ti ti-alert-circle" style="font-size:15px"></i> Network error. Please try again.</div>';
+  }
+}
+
+loadUsers();
+</script>

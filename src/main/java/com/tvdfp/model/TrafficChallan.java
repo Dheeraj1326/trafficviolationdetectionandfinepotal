@@ -1,5 +1,6 @@
 package com.tvdfp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,6 +34,11 @@ public class TrafficChallan {
 
     @Column(name = "payment_date")
     private LocalDateTime paymentDate;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"password","created","modified","status","tempOtp"})
+    private Users user;
 
     @Column(name = "offence_name", length = 255)
     private String offenceName;
@@ -111,6 +117,9 @@ public class TrafficChallan {
 
     public LocalDateTime getPaymentDate() { return paymentDate; }
     public void setPaymentDate(LocalDateTime paymentDate) { this.paymentDate = paymentDate; }
+
+    public Users getUser() { return user; }
+    public void setUser(Users user) { this.user = user; }
 
     public String getOffenceName() { return offenceName; }
     public void setOffenceName(String offenceName) { this.offenceName = offenceName; }

@@ -73,6 +73,7 @@ public class AuthRestController {
 
         response.put("message", "Login successful!");
         response.put("name", user.getName());
+        response.put("user_id", String.valueOf(user.getUser_id()));
         return ResponseEntity.ok(response);
     }
 }

@@ -25,6 +25,11 @@ public class PageController {
 	public String admin() {
 		return "admin"; 
 	}
+
+	@GetMapping("/admin/create-challan")
+	public String createChallan() {
+		return "create_challan";
+	}
 	
 	@GetMapping("/receipt")
 	public String receipt() {
